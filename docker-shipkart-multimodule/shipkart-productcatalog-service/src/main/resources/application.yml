@@ -1,0 +1,33 @@
+##datasource specific properties
+#spring:
+#  datasource:
+#    url: jdbc:mysql://localhost:3306/jfsseptkart
+#    username: root
+#    password: root		
+#
+##jpa specific properties
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    show-sql: true
+spring:
+  application:
+    name: product-catalog
+  config:
+    import: configserver:http://config-server:8888
+  profiles:
+    default: default
+    active:
+    - dev
+server:
+  port: 8081
+management:
+  endpoints:
+    web:
+     exposure:
+       include: '*'
+  endpoint:
+    health:
+      show-details: always
+
+

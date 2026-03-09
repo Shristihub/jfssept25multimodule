@@ -1,0 +1,33 @@
+server:
+ port: 9000
+spring:
+  application:
+    name: api-gateway
+  cloud:
+   gateway:
+    server:
+     webmvc:
+      routes:
+#    http://localhost:9000/catalog/products/productId/1---------//   http://localhost:8081/catalog-service/v1/products/productId/1
+      - id: catalogService
+        uri: lb://product-catalog    # service name
+        predicates:
+        - Path= /catalog/**
+        filters:
+          - AddRequestHeader=X-catalog-header,productcatalog
+          - AddResponseHeader=X-catalog-responsetime,"#{T(java.time.LocalDate).now()}"
+          - RewritePath=/catalog/(?<segment>.*),/catalog-service/v1/${segment}
+#    http://localhost:9000/info/products/category/sports---------// http://localhost:8082/info-service/v1/products/category/sports
+      - id: info-service
+        uri: lb://product-info
+        predicates:
+        - Path= /info/**
+        filters:
+          - AddRequestHeader=X-info-header,productinfo
+          - AddResponseHeader=X-info-responsetime,"#{T(java.time.LocalDate).now()}"   
+          - RewritePath=/info/(?<segment>.*),/info-service/v1/${segment}
+
+
+
+
+

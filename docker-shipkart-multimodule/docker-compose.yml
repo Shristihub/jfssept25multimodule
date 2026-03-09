@@ -1,0 +1,97 @@
+services:
+ mysql:
+    image: mysql:8
+    container_name: mysql-container
+    ports:
+      - "3307:3306"
+    environment:
+       MYSQL_ROOT_PASSWORD: root
+       MYSQL_DATABASE: shipkartdb
+    networks:
+       - shipkart-network
+  
+ config-server:
+    build:
+     context: ./shipkart-config-server
+     dockerfile: Dockerfile
+    image: configserver
+    container_name: config-container
+    ports:
+      - 8888:8888
+    networks:
+      - shipkart-network
+  
+ api-gateway:
+  build:
+   context: ./shipkart-api-gateway
+   dockerfile: Dockerfile
+  image: gateway-api
+  container_name: gateway_con
+  ports: 
+   - 9000:9000
+  networks: 
+    - shipkart-network
+  depends_on:
+      - product-catalog
+      - product-info
+      - product-inventory
+      - product-cart
+   
+ product-catalog:
+    build:
+     context: ./shipkart-productcatalog-service
+     dockerfile: Dockerfile
+    image: productcatalog
+    container_name: catalog-container
+    ports:
+      - 8081:8081
+    depends_on:
+      - mysql
+      - product-inventory
+      - config-server
+    networks:
+      - shipkart-network
+
+ product-inventory:
+    build:
+     context: ./shipkart-productinventory-service
+     dockerfile: Dockerfile
+    image: productinventory
+    container_name: inventory-container
+    ports:
+      - 8083:8083
+    depends_on:
+      - mysql
+      - config-server
+    networks:
+      - shipkart-network
+  
+ product-info:
+    build:
+     context: ./shipkart-productinfo-service
+     dockerfile: Dockerfile
+    image: productinfo
+    container_name: info-container
+    ports:
+      - 8082:8082
+    depends_on:
+      - product-catalog
+    networks:
+      - shipkart-network
+ product-cart:
+    build:
+     context: ./shipkart-productcart-service
+     dockerfile: Dockerfile
+    image: productcart
+    container_name: cart-container
+    ports:
+      - 8085:8085
+    depends_on:
+      - mysql
+      - product-info
+      - config-server
+    networks:
+      - shipkart-network
+networks:
+  shipkart-network:
+     driver: bridge 

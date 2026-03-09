@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: product-info
+server:
+  port: 8082
+
+#management.endpoints.web.exposure.include='*'
+#management.health.circuitbreakers.enabled=true
+#management.endpoint.health.show-details=ALWAYS
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+  health:
+   circuitbreakers:
+    enabled: true
+
+   
+#configuration for resilence
+resilience4j:
+ circuitbreaker:
+    instances:
+     info-service:
+       sliding-window-type: COUNT_BASED
+       failure-rate-threshold: 50
+       minimum-number-of-calls: 5
+       automatic-transition-from-open-to-half-open-enabled: true
+       wait-duration-in-open-state: 5s
+       permitted-number-of-calls-in-half-open-state: 3
+       sliding-window-size: 10
+       register-health-indicator: true
+       recordExceptions:
+        - feign.FeignException
+        - org.springframework.web.client.RestClientException
+        - java.net.ConnectException
+        - java.io.IOException
+        - java.lang.Exception 
+
+
+
+

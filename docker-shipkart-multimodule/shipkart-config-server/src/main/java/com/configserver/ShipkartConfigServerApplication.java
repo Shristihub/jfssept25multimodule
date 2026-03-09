@@ -1,0 +1,16 @@
+package com.configserver;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.config.server.EnableConfigServer;
+
+@SpringBootApplication
+@EnableConfigServer
+public class ShipkartConfigServerApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(ShipkartConfigServerApplication.class, args);
+		System.out.println("hello");
+	}
+
+}
