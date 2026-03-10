@@ -21,25 +21,16 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CartServiceImpl implements ICartService {
 
-
 	private final ICartRepository repository;
 	private final IProductInfoClient infoClient;
 	private final ModelMapper mapper;
 
-
 	@Override
-	@CircuitBreaker(name = "cartService",fallbackMethod = "fallbackAddToCart")
+	@CircuitBreaker(name = "cartService", fallbackMethod = "fallbackAddToCart")
 	public CartDto addToCart(int userId, int productId, int quantity) {
 		// check if the user with this id is available in the cart table
 		// if yes get the cart from the table
-		Cart cart = repository.findByUserId(userId)
-				// if cart not vailable means create a new cart
-				.orElseGet(() -> {
-					Cart newCart = new Cart();
-					newCart.setCartItems(new ArrayList<>());
-					return newCart;
-				});
-		// set the userId to the cart
+		Cart cart = getCartById(userId);		// set the userId to the cart
 		cart.setUserId(userId);
 
 		// get the product from productinfo using productId
@@ -47,11 +38,7 @@ public class CartServiceImpl implements ICartService {
 		// check if the list is empty in the cart
 		if (cart.getCartItems().isEmpty()) {
 			// create a new cartItem
-			CartItem newcartItem = new CartItem();
-			newcartItem.setProductId(productId);
-			newcartItem.setProductName(product.getProductName());
-			newcartItem.setPrice(product.getPrice());
-			newcartItem.setQuantity(quantity);
+			CartItem newcartItem = createCartItem(product, quantity);
 			cart.getCartItems().add(newcartItem);
 		} else {
 			// if the user has the cart already with cartItems
@@ -72,11 +59,7 @@ public class CartServiceImpl implements ICartService {
 				cart.setCartItems(existingItems);
 			} else {
 				// item not available in the cart.so add a new cartitem
-				CartItem newcartItem = new CartItem();
-				newcartItem.setProductId(productId);
-				newcartItem.setProductName(product.getProductName());
-				newcartItem.setPrice(product.getPrice());
-				newcartItem.setQuantity(quantity);
+				CartItem newcartItem = createCartItem(product, quantity);
 				existingItems.add(newcartItem);
 				System.out.println(existingItems);
 				cart.setCartItems(existingItems);
@@ -92,18 +75,37 @@ public class CartServiceImpl implements ICartService {
 		Cart savedCart = repository.save(cart);
 		return mapper.map(savedCart, CartDto.class);
 	}
-	
-//	  CartItem createCartItem()
-	
-	public CartDto fallbackAddToCart(Exception e) {
-		System.out.println("exception occured "+e);
-		return new CartDto();
+    //methods used in addToCart
+	CartItem createCartItem(Product product, int quantity) {
+		CartItem newcartItem = new CartItem();
+		newcartItem.setProductId(product.getProductId());
+		newcartItem.setProductName(product.getProductName());
+		newcartItem.setPrice(product.getPrice());
+		newcartItem.setQuantity(quantity);
+		return newcartItem;
 	}
 	
+//	methods used in addToCart
+	Cart getCartById(int userId) {
+		Cart cart = repository.findByUserId(userId)
+		// if cart not available means create a new cart
+		.orElseGet(() -> {
+			Cart newCart = new Cart();
+			newCart.setCartItems(new ArrayList<>());
+			return newCart;
+		});
+		return cart;
+
+	}
+
+	public CartDto fallbackAddToCart(Exception e) {
+		System.out.println("exception occured " + e);
+		return new CartDto();
+	}
 
 	@Override
 	public CartDto viewCart(int userId) {
-		Cart cart =  repository.findByUserId(userId).orElseGet(() -> new Cart());
+		Cart cart = repository.findByUserId(userId).orElseGet(() -> new Cart());
 		return mapper.map(cart, CartDto.class);
 	}
 

@@ -1,7 +1,5 @@
 package com.productcart.model;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,18 +10,17 @@ import lombok.ToString;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString(exclude = "products")
-public class Brand {
-	private String brandName;
-	private Integer brandId;
-	private List<Product> products;
+@ToString
+public class CartRequest {
+
+	private int userId;
+    private int productId;
+    private int quantity;
+    
+
+
+	
 }
-
-
-
-
-
-
 
 
 

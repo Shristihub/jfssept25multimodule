@@ -5,7 +5,7 @@
 <!--inherit from parent pom-->
 	<parent>
 		<groupId>com.shipkart</groupId>
-    	<artifactId>docker-shipkart-multimodule</artifactId>
+    	<artifactId>docker-shipkart-multimodule</artifactId> 
     	<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath> <!-- lookup from docker-multi -->
 	</parent>

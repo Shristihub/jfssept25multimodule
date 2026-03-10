@@ -11,7 +11,8 @@ import com.productinfo.model.Product;
 
 
 
-@FeignClient(name = "product-catalog")
+// this is the service name in Docker file
+@FeignClient(name = "product-catalog",url="http://product-catalog:8081")
 public interface IProductCatalogFeignClient {
 	
 //	http://localhost:8081/catalog-service/v1/products
