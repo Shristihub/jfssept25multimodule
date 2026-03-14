@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: order-consumer
+  kafka:
+   consumer:
+      bootstrap-servers:
+       - kafka:9092    #kafka is the service name in docker
+      group-id: order_group_id
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+       "[spring.json.trusted.packages]": "*"
+       "[spring.json.use.type.headers]": false
+       "[spring.json.value.default.type]": com.example.model.Product
+server:
+  port: 8091
+
+order:
+   topicname: order-topic
+

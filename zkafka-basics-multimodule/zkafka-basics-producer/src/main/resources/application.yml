@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: order-producer
+  kafka:
+    producer:
+      bootstrap-servers:
+      - kafka:9092  # name of the kafka service in docker
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer:  org.springframework.kafka.support.serializer.JsonSerializer	          
+server:
+  port: 8090
+
+order:
+   topicname: order-topic
+
