@@ -21,7 +21,7 @@ import com.productcatalog.service.IBrandService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/product-api/v1")
+@RequestMapping("/catalog-service/v1")
 @RequiredArgsConstructor
 public class BrandController {
 

@@ -19,13 +19,13 @@ import com.productcatalog.service.ICategoryService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/product-api/v1")
+@RequestMapping("/catalog-service/v1")
 @RequiredArgsConstructor
 public class CategoryController {
 
 	private final ICategoryService categoryService;
 
-	// http://localhost:8081/product-api/v1/categories
+	// http://localhost:8081/catalog-service/v1/categories
 	@PostMapping( "/categories")
 	ResponseEntity<Void> addCategory(@RequestBody CategoryDto categoryDto) {
 		categoryService.addCategory(categoryDto);

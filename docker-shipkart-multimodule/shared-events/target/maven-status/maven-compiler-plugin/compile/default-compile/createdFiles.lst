@@ -1,0 +1,3 @@
+com\shared\models\OrderCreatedEvent.class
+com\shared\models\PaymentFailedEvent.class
+com\shared\models\PaymentSucceededEvent.class

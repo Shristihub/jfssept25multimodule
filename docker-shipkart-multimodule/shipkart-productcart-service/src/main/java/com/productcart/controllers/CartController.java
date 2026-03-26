@@ -24,7 +24,7 @@ public class CartController {
 	private final ICartService cartService;
 	
 	//addToCart
-	// http://localhost:8085/cart-service/v1/cart/add?userId=1&productId=1&quantity=2
+	// http://localhost:8085/cart-service/v1/cart/add
 	@PostMapping("/cart/add")
 	ResponseEntity<CartDto> addToCart(@RequestBody CartRequest cartRequest ){
 		CartDto cartDto = cartService.addToCart(cartRequest.getUserId(),cartRequest.getProductId(),cartRequest.getQuantity());

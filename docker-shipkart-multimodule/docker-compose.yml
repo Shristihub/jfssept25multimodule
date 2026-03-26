@@ -1,46 +1,49 @@
 services:
- mysql:
+  mysql:
     image: mysql:8
     container_name: mysql-container
     ports:
       - "3307:3306"
     environment:
-       MYSQL_ROOT_PASSWORD: root
-       MYSQL_DATABASE: shipkartdb
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: shipkartdb
     networks:
-       - shipkart-network
-  
- config-server:
+      - shipkart-network
+
+  config-server:
     build:
-     context: ./shipkart-config-server
-     dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile
+      target: config-server
     image: configserver
     container_name: config-container
     ports:
       - 8888:8888
     networks:
       - shipkart-network
-  
- api-gateway:
-  build:
-   context: ./shipkart-api-gateway
-   dockerfile: Dockerfile
-  image: gateway-api
-  container_name: gateway_con
-  ports: 
-   - 9000:9000
-  networks: 
-    - shipkart-network
-  depends_on:
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: api-gateway
+    image: gateway-api
+    container_name: gateway_con
+    ports:
+      - 9000:9000
+    depends_on:
       - product-catalog
       - product-info
       - product-inventory
       - product-cart
-   
- product-catalog:
+    networks:
+      - shipkart-network
+
+  product-catalog:
     build:
-     context: ./shipkart-productcatalog-service
-     dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile
+      target: product-catalog
     image: productcatalog
     container_name: catalog-container
     ports:
@@ -52,10 +55,11 @@ services:
     networks:
       - shipkart-network
 
- product-inventory:
+  product-inventory:
     build:
-     context: ./shipkart-productinventory-service
-     dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile
+      target: product-inventory
     image: productinventory
     container_name: inventory-container
     ports:
@@ -65,11 +69,12 @@ services:
       - config-server
     networks:
       - shipkart-network
-  
- product-info:
+
+  product-info:
     build:
-     context: ./shipkart-productinfo-service
-     dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile
+      target: product-info
     image: productinfo
     container_name: info-container
     ports:
@@ -78,10 +83,12 @@ services:
       - product-catalog
     networks:
       - shipkart-network
- product-cart:
+
+  product-cart:
     build:
-     context: ./shipkart-productcart-service
-     dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile
+      target: product-cart
     image: productcart
     container_name: cart-container
     ports:
@@ -92,6 +99,63 @@ services:
       - config-server
     networks:
       - shipkart-network
+
+  product-order:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: product-order
+    image: productorder
+    container_name: order-container
+    ports:
+      - 8090:8090
+    depends_on:
+      - mysql
+      - config-server
+    networks:
+      - shipkart-network
+
+  product-payment:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: product-payment
+    image: productpayment
+    container_name: payment-container
+    ports:
+      - 8091:8091
+    depends_on:
+      - mysql
+      - config-server
+    networks:
+      - shipkart-network
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - shipkart-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    ports:
+      - "9092:9092"
+      - "9094:9094"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9094
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
+    networks:
+      - shipkart-network
+
 networks:
   shipkart-network:
-     driver: bridge 
+    driver: bridge

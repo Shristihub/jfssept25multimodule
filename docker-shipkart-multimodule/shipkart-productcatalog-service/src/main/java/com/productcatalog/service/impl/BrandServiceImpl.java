@@ -40,7 +40,9 @@ public class BrandServiceImpl implements IBrandService{
 
 	@Override
 	public List<BrandDto> getAll() {
-		return null;
+		List<Brand> brands =  brandRepository.findAll();
+		return brands.stream().map(brand->productMapper.converttoBrandDto(brand))
+		.toList();
 	}
 
 	@Override
