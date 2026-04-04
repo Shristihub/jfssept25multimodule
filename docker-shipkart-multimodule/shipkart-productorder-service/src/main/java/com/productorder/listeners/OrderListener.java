@@ -19,7 +19,7 @@ public class OrderListener {
 		System.out.println(event);
 		String status = event.getStatus();
 		int orderId = event.getOrderId();
-		//update the order
+		//update the order 
 		orderService.updateOrder(orderId,status);
 		
 	}

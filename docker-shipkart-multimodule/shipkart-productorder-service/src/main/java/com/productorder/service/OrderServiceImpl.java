@@ -45,7 +45,7 @@ public class OrderServiceImpl implements IOrderService{
 	@Override
 	public void updateOrder(int orderId, String paymentStatus) {
 		//find order by id
-		Orders orders = repository.findById(orderId)
+		Orders orders  = repository.findById(orderId)
 				                  .orElseThrow(()-> new RuntimeException("invalid orderid"));
 		// paymentStatus
 		if(paymentStatus.equals("SUCCESS"))

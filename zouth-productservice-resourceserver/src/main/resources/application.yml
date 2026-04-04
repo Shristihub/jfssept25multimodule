@@ -1,0 +1,14 @@
+server:
+  port: 8095
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+      # this resource server has the protected data
+      #this is the url of the OpenIDConnect Provider(url of the authorization server)
+      # that issues the token - important configuration
+        jwt:
+          issuer-uri: http://localhost:9001
+  application:
+    name: product-resource
